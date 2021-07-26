@@ -1,0 +1,264 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Sensor Receiver &#8212; Inference Server  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="DataStore" href="datastore_api.html" />
+    <link rel="prev" title="IPC" href="ipc_api.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <span class="target" id="module-processes"></span><section id="sensor-receiver">
+<h1>Sensor Receiver<a class="headerlink" href="#sensor-receiver" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="processes.SensorReceiver">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">processes.</span></span><span class="sig-name descname"><span class="pre">SensorReceiver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ipc</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="ipc_api.html#IPC.IPC" title="IPC.core.IPC"><span class="pre">IPC.core.IPC</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#processes.SensorReceiver" title="Permalink to this definition">¶</a></dt>
+<dd><p>This abstract class defines interface to receive sensor data from client, process it and send it to “DataStore”.
+To add new sensor receiver, one simply needs to implement its abstract methods.
+Note than SensorReceiver inherits multiprocessing.Processing.
+Each SensorReceiver is a process.”
+IPC object is used for communication, whereas DataStore collects data from all sources and fuse it.
+Both these objects are shared by all the SensorReceiverProcesses.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="processes.SensorReceiver.process_data">
+<em class="property"><span class="pre">abstract</span> </em><span class="sig-name descname"><span class="pre">process_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="headerlink" href="#processes.SensorReceiver.process_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Process the data received. This will vary widely with type of sensor we are dealing with.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> – Data that is returned by <a class="reference internal" href="#processes.SensorReceiver.read_data" title="processes.SensorReceiver.read_data"><code class="xref py py-meth docutils literal notranslate"><span class="pre">read_data()</span></code></a></p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Analysis of the data received.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="processes.SensorReceiver.read_data">
+<em class="property"><span class="pre">abstract</span> </em><span class="sig-name descname"><span class="pre">read_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">any</span><a class="headerlink" href="#processes.SensorReceiver.read_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read data using IPC interface.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Data read, can be of any type.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="processes.SensorReceiver.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="headerlink" href="#processes.SensorReceiver.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main function of the process, runs indefinitely.
+Call routines in following order: -
+read_data -&gt; process_data -&gt; send_to_store</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="processes.SensorReceiver.send_to_store">
+<em class="property"><span class="pre">abstract</span> </em><span class="sig-name descname"><span class="pre">send_to_store</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="headerlink" href="#processes.SensorReceiver.send_to_store" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send the data after processing to DataStore</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="lanedetectionprocess">
+<h1>LaneDetectionProcess<a class="headerlink" href="#lanedetectionprocess" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="processes.LaneDetectionProcess">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">processes.</span></span><span class="sig-name descname"><span class="pre">LaneDetectionProcess</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ipc</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="ipc_api.html#IPC.IPC" title="IPC.core.IPC"><span class="pre">IPC.core.IPC</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">q</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">multiprocessing.context.BaseContext.Queue</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#processes.LaneDetectionProcess" title="Permalink to this definition">¶</a></dt>
+<dd><p>Responsible for Receiving and Processing Lane Image, and process that image.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ipc</strong> – required to read the image</p></li>
+<li><p><strong>q</strong> – A thread-safe queue to dump the output</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="processes.LaneDetectionProcess.process_data">
+<span class="sig-name descname"><span class="pre">process_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.array</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="headerlink" href="#processes.LaneDetectionProcess.process_data" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>img</strong> – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Returns nothing just sets the __inference</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="processes.LaneDetectionProcess.read_data">
+<span class="sig-name descname"><span class="pre">read_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">numpy.array</span><a class="headerlink" href="#processes.LaneDetectionProcess.read_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read image from client
+:return: Image sent by the client</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="processes.LaneDetectionProcess.send_to_store">
+<span class="sig-name descname"><span class="pre">send_to_store</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#processes.LaneDetectionProcess.send_to_store" title="Permalink to this definition">¶</a></dt>
+<dd><p>Put the output in the buffer(q)
+:return: None</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="objectdetectionprocess">
+<h1>ObjectDetectionProcess<a class="headerlink" href="#objectdetectionprocess" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="processes.ObjectDetectionProcess">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">processes.</span></span><span class="sig-name descname"><span class="pre">ObjectDetectionProcess</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ipc</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="ipc_api.html#IPC.IPC" title="IPC.core.IPC"><span class="pre">IPC.core.IPC</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">q</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">multiprocessing.context.BaseContext.Queue</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#processes.ObjectDetectionProcess" title="Permalink to this definition">¶</a></dt>
+<dd><p>Responsible for receiving point-cloud image and finding objects in it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ipc</strong> – required to read the image</p></li>
+<li><p><strong>q</strong> – A thread-safe queue to dump the output</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="processes.ObjectDetectionProcess.process_data">
+<span class="sig-name descname"><span class="pre">process_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#processes.ObjectDetectionProcess.process_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extracts obstacle object from image</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>img</strong> – Image to be processed</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None. Just sets the __obstacles</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="processes.ObjectDetectionProcess.read_data">
+<span class="sig-name descname"><span class="pre">read_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#processes.ObjectDetectionProcess.read_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read point-cloud image from client</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Point-Cloud Image sent by the client</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="processes.ObjectDetectionProcess.send_to_store">
+<span class="sig-name descname"><span class="pre">send_to_store</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#processes.ObjectDetectionProcess.send_to_store" title="Permalink to this definition">¶</a></dt>
+<dd><p>Puts the output in buffer</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Inference Server</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="api.html">API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="ipc_api.html">IPC</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Sensor Receiver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#lanedetectionprocess">LaneDetectionProcess</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#objectdetectionprocess">ObjectDetectionProcess</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datastore_api.html">DataStore</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="api.html">API</a><ul>
+      <li>Previous: <a href="ipc_api.html" title="previous chapter">IPC</a></li>
+      <li>Next: <a href="datastore_api.html" title="next chapter">DataStore</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Satyam Jay.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.0.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/process_api.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

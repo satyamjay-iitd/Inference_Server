@@ -1,0 +1,207 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>DataStore &#8212; Inference Server  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Sensor Receiver" href="process_api.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="datastore">
+<h1>DataStore<a class="headerlink" href="#datastore" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="processes.DataStore">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">processes.</span></span><span class="sig-name descname"><span class="pre">DataStore</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ipc</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="ipc_api.html#IPC.IPC" title="IPC.core.IPC"><span class="pre">IPC.core.IPC</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">q_object</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">multiprocessing.context.BaseContext.Queue</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">q_lane</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">multiprocessing.context.BaseContext.Queue</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#processes.DataStore" title="Permalink to this definition">¶</a></dt>
+<dd><p>Responsible for receiving point-cloud image and finding objects in it.
+:param ipc: Required to send the data back to client
+:param q_object: Buffer to read the output from ObjectDetectionProcess
+:param q_lane: Buffer to read the output from LaneDetectionProcess</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="processes.DataStore.__calculate_steering_angle">
+<span class="sig-name descname"><span class="pre">__calculate_steering_angle</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#processes.DataStore.__calculate_steering_angle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates steering angle of the vehicle. Central Intelligence of the system</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Steering Angle.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="processes.DataStore.__calculate_y">
+<span class="sig-name descname"><span class="pre">__calculate_y</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#processes.DataStore.__calculate_y" title="Permalink to this definition">¶</a></dt>
+<dd><p>Utility function to calculate y given equation and x</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>line_eqn_cubic</strong> – Cubic equation of the line</p></li>
+<li><p><strong>x</strong> – input</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>y: output</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="processes.DataStore.__can_change_lane">
+<span class="sig-name descname"><span class="pre">__can_change_lane</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">curr_lane_obst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">left_lane_obst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">right_lane_obs</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">processes.DataStore.LaneChangeEnum</span><a class="headerlink" href="#processes.DataStore.__can_change_lane" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tells us if we should change lane and where.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>curr_lane_obst</strong> – </p></li>
+<li><p><strong>left_lane_obst</strong> – </p></li>
+<li><p><strong>right_lane_obs</strong> – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="processes.DataStore.__find_lane">
+<span class="sig-name descname"><span class="pre">__find_lane</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lanes_in_left</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lanes_in_right</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#processes.DataStore.__find_lane" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds the lane in which that object belongs to.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>obj</strong> – </p></li>
+<li><p><strong>lanes_in_left</strong> – </p></li>
+<li><p><strong>lanes_in_right</strong> – </p></li>
+<li><p><strong>b1</strong> – </p></li>
+<li><p><strong>b2</strong> – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Returns the lane obj belongs to</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="processes.DataStore.__fuse">
+<span class="sig-name descname"><span class="pre">__fuse</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#processes.DataStore.__fuse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fuses the data from LaneDetection Sensor and ObjectDetection Sensor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Returns obstacle, which are in left lane, current lane and right lane.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="processes.DataStore.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="headerlink" href="#processes.DataStore.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main function of the process. Continuously checks for new data in buffer and calculate vehicle control</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Inference Server</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="api.html">API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="ipc_api.html">IPC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="process_api.html">Sensor Receiver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="process_api.html#lanedetectionprocess">LaneDetectionProcess</a></li>
+<li class="toctree-l2"><a class="reference internal" href="process_api.html#objectdetectionprocess">ObjectDetectionProcess</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">DataStore</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="api.html">API</a><ul>
+      <li>Previous: <a href="process_api.html" title="previous chapter">Sensor Receiver</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Satyam Jay.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.0.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/datastore_api.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
