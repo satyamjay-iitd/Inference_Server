@@ -74,7 +74,6 @@ class LaneDetectionProcess(SensorReceiver):
         msg = "Lane Detection Main loop started"
         return msg
 
-
 if __name__ == '__main__':
     # Create a custom logger
     logger = logging.getLogger('PINET_LD')
